@@ -1,10 +1,10 @@
-#include "ProducerTestFixture.h"
+#include "HTDFixture.h"
 
 namespace com { namespace amazonaws { namespace kinesis { namespace video {
-class ProducerApiTest : public ProducerTestBase {
+class HTDApi : public HTDBase {
 };
 
-ProducerTestBase* gProducerApiTest;
+HTDBase* gHTDApi;
 
 PVOID staticProducerRoutine(PVOID arg)
 {
@@ -12,7 +12,7 @@ PVOID staticProducerRoutine(PVOID arg)
     return gHTDApi->basicProducerRoutine(kinesis_video_stream);
 }
 
-PVOID ProducerTestBase::basicProducerRoutine(KinesisVideoStream* kinesis_video_stream) {
+PVOID HTDBase::basicProducerRoutine(KinesisVideoStream* kinesis_video_stream) {
     UINT32 index = 0;
     UINT64 timestamp = 0;
     Frame frame;
@@ -59,8 +59,8 @@ PVOID ProducerTestBase::basicProducerRoutine(KinesisVideoStream* kinesis_video_s
     // We will wait for 10 seconds only
     // This is for a demo purpose only!!!
     index = 0;
-    while (!gProducerApiTest->stop_called_ && index < 1000) {
-        LOG_DEBUG("Awaiting for the stopped notification... Status of stopped state " << gProducerApiTest->stop_called_);
+    while (!gHTDApi->stop_called_ && index < 1000) {
+        LOG_DEBUG("Awaiting for the stopped notification... Status of stopped state " << gHTDApi->stop_called_);
         usleep(10000L);
         index++;
     }
@@ -68,7 +68,7 @@ PVOID ProducerTestBase::basicProducerRoutine(KinesisVideoStream* kinesis_video_s
     return NULL;
 }
 
-TEST_F(ProducerApiTest, create_produce_stream)
+TEST_F(HTDApi, create_produce_stream)
 {
     // Check if it's run with the env vars set if not bail out
     if (!access_key_set_) {

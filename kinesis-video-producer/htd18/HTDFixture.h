@@ -31,9 +31,9 @@ LOGGER_TAG("com.amazonaws.kinesis.video.TEST");
 #define TEST_MAGIC_NUMBER                                   0x1234abcd
 
 // Forward declaration
-class ProducerTestBase;
+class HTDBase;
 
-class TestClientCallbackProvider : public ClientCallbackProvider {
+class ClientCallbackProvider : public ClientCallbackProvider {
 public:
     UINT64 getCallbackCustomData() override {
         return reinterpret_cast<UINT64> (this);
@@ -48,7 +48,7 @@ public:
 
 class TestStreamCallbackProvider : public StreamCallbackProvider {
 public:
-    TestStreamCallbackProvider(ProducerTestBase* producer_test_base) {
+    TestStreamCallbackProvider(HTDBase* producer_test_base) {
         producer_test_base_ = producer_test_base;
     }
 
@@ -112,7 +112,7 @@ private:
 
     static STATUS validateCallback(UINT64 custom_data);
 
-    ProducerTestBase* producer_test_base_;
+    HTDBase* producer_test_base_;
 };
 
 class TestDeviceInfoProvider : public DefaultDeviceInfoProvider {
@@ -124,7 +124,7 @@ public:
     }
 };
 
-extern ProducerTestBase* gProducerApiTest;
+extern HTDBase* gHTDApi;
 
 class TestCredentialProvider : public StaticCredentialProvider {
     // Test rotation period is 40 second for the grace period.
@@ -146,9 +146,9 @@ public:
     }
 };
 
-class ProducerTestBase : public ::testing::Test {
+class HTDBase : public ::testing::Test {
 public:
-    ProducerTestBase() : producer_thread_(0),
+    HTDBase() : producer_thread_(0),
                          start_producer_(false),
                          stop_called_(false),
                          stop_producer_(false),
@@ -160,7 +160,7 @@ public:
         stream_callback_provider_ = make_unique<TestStreamCallbackProvider>(this);
 
         // Set the global to this object so we won't need to allocate structures in the heap
-        gProducerApiTest = this;
+        gHTDApi = this;
 
         // Read the credentials from the environmental variables if defined. Use defaults if not.
         char const *accessKey;
